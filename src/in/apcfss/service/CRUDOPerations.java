@@ -42,6 +42,7 @@ public class CRUDOPerations {
 		   
 		}
 
+	@SuppressWarnings("null")
 	public static String AddEmployee(HttpServletRequest req, HttpServletResponse res) throws Exception
 	{	Employee employee = null;
 
@@ -77,11 +78,15 @@ public class CRUDOPerations {
 		PreparedStatement ps1 = null;
 		int empdetailsUpdateResult=0;
 		ResultSet rs=null;
+		ResultSet rsempid=null;
 		Statement stmt = null;
+		Statement stmtempid = null;
 		String sql=null;
 		String sql1=null;
+		String sqlempid=null;
 		int eid =0;
 		int employesalaryupdate = 0;
+		String empid=null;
 		//dayspresent=addEmployeattendence.dayspresent;
 		try
 		{
@@ -103,14 +108,20 @@ public class CRUDOPerations {
 			System.out.println("net salary:"+net_salary);
 			System.out.println("basic pay: "+basic_pay);
 			sql="select nextval('emp_seqence') as emp_id";
-
+			sqlempid="select ('CFSS'||nextval('emp_id_seq')) as id";
+			System.out.println("checkingg...");
+			System.out.println(sqlempid);
 			rs=stmt.executeQuery(sql);
-			
+			rsempid=stmtempid.executeQuery(sqlempid);
 			while(rs.next())
 			{
 				eid = rs.getInt("emp_id");
 			}	
-			ps=conn.prepareStatement("INSERT INTO public.employeedetailsform(id, name, qualification, gender, dateofjoining, pancard, dob,salary,dayspresent) VALUES(?, ?, ?, ?, ?, ?, ?,?,?)");
+			while(rsempid.next())
+			{
+				empid = rsempid.getString("id");
+			}	
+			ps=conn.prepareStatement("INSERT INTO public.employeedetailsform(id, name, qualification, gender, dateofjoining, pancard, dob,salary,dayspresent,empid) VALUES(?, ?, ?, ?, ?, ?, ?,?,?,?)");
 			
 			ps.setInt(1, eid);
 			ps.setString(2,ename);
@@ -121,6 +132,7 @@ public class CRUDOPerations {
 			ps.setString(7, dob);
 			ps.setString(8, salary);
 			ps.setString(9, dayspresent);
+			ps.setString(9, empid);
 			
 			empdetailsUpdateResult=ps.executeUpdate();  
 			System.out.println(empdetailsUpdateResult);
